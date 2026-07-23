@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrato de Serviço - CPAp PMBA</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js para o Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        google: {
+                            blue: '#1a73e8',
+                            purple: '#673ab7',
+                            red: '#d93025',
+                            yellow: '#fbbc04',
+                            green: '#1e8e3e',
+                            bg: '#f0ebf8',
+                            cardBg: '#ffffff',
+                            text: '#202124',
+                            secondary: '#5f6368'
+                        },
+                        pmba: {
+                            blue: '#1b365d',
+                            accent: '#d9a74a',
+                            light: '#f4f6f9'
+                        },
+                        cpap: {
+                            bg: '#fcfaf6',
+                            text: '#332511',
+                            accent: '#7a624a',
+                            lightAccent: '#bda68c',
+                            cream: '#eae2d8',
+                            darkBrown: '#1f160e',
+                            border: '#dfd6ca',
+                            card: '#ffffff'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* PROTEÇÃO VIA CSS: Bloqueio universal de seleção de texto */
+        body {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+
+        /* EXCEÇÃO DE USABILIDADE: Permite digitação e seleção dentro dos inputs do formulário */
+        input, textarea {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+
+        .google-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #dadce0;
+            transition: all 0.2s ease;
+        }
+        .google-focused-card {
+            border-left: 6px solid #7a624a !important;
+        }
+        
+        .banner-container {
+            background-color: #d8b2a1;
+            background: linear-gradient(135deg, #dfb5a4 0%, #d1a18d 100%);
+        }
+        .banner-left-shape {
+            background-color: #cbb2a2;
+            clip-path: polygon(0 0, 82% 0, 100% 100%, 0% 100%);
+        }
+        .banner-footer {
+            background-color: #382820;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            clip-path: polygon(0 0, 78% 0, 80% 100%, 100% 100%, 100% 100%, 0 100%);
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: #ffffff !important;
+                color: #1f160e !important;
+            }
+            .print-area {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background-color: #ffffff !important;
+            }
+            
+            .print-only-graphic .print-hidden-text-report {
+                display: none !important;
+            }
+            .print-only-graphic .print-graphic-card {
+                page-break-inside: avoid !important;
+                height: 99vh !important;
+                max-height: 99vh !important;
+                overflow: hidden !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-neutral-100 text-google-text font-sans min-h-screen flex flex-col">
+
+    <header class="bg-white border-b border-neutral-200 sticky top-0 z-50 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-full overflow-hidden flex items-center justify-center">
+                        <img src="image_8e9d5b.png" alt="CPAp Logo" class="w-full h-full object-cover scale-[1.15] cpap-logo-target" data-logo-style="header" onerror="handleLogoFallback(this)">
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-bold text-cpap-darkBrown leading-tight tracking-tight">PMBA • CPAp</h1>
+                        <p class="text-[10px] text-neutral-500 font-semibold">Console de Gestão Operacional</p>
+                    </div>
+                </div>
+
+                <nav class="flex space-x-1 sm:space-x-2">
+                    <button onclick="switchTab('form-view')" id="tab-form-view" class="px-3 py-2 text-sm font-semibold rounded-lg text-cpap-darkBrown bg-[#fcfaf6] border border-cpap-border transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-pen text-[#7a624a]"></i> <span class="hidden md:inline">Console Formulário</span>
+                    </button>
+                    <button onclick="switchTab('dashboard-view')" id="tab-dashboard-view" class="px-3 py-2 text-sm font-semibold rounded-lg text-neutral-600 hover:text-cpap-darkBrown hover:bg-neutral-100 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-neutral-400"></i> <span class="hidden md:inline">Extrato &amp; Infográfico</span>
+                    </button>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                        Modo Ativo
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-start">
+
+        <!-- TAB 1: FORMULÁRIO DE ATUALIZAÇÃO DOS DADOS DO DIA -->
+        <section id="tab-content-form-view" class="w-full max-w-5xl mx-auto space-y-6 block no-print">
+            
+            <div class="banner-container relative rounded-2xl overflow-hidden shadow-md border border-[#c49a88]/40">
+                <div class="relative min-h-[150px] md:h-48 w-full flex items-center overflow-hidden">
+                    
+                    <div class="banner-left-shape absolute left-0 top-0 bottom-0 w-[30%] md:w-[24%] z-0 border-r-2 border-white/40"></div>
+                    
+                    <div class="absolute right-[-20px] top-[-20px] w-64 h-64 opacity-15 pointer-events-none z-0">
+                        <img src="image_8e9d5b.png" class="w-full h-full object-cover scale-125 cpap-logo-target" data-logo-style="watermark" alt="Watermark" onerror="handleLogoFallback(this)">
+                    </div>
+
+                    <div class="relative z-10 w-full flex items-center justify-between px-6 md:px-10">
+                        <div class="flex-shrink-0 flex items-center justify-center w-24 h-24 md:w-36 md:h-36 rounded-full bg-white/20 backdrop-blur-xs p-1 shadow-inner border border-white/40">
+                            <img src="image_8e9d5b.png" alt="CPAp Logo" class="w-full h-full object-cover scale-110 cpap-logo-target" data-logo-style="banner" onerror="handleLogoFallback(this)">
+                        </div>
+
+                        <div class="flex-grow pl-6 md:pl-10 text-[#2b1b12]">
+                            <h2 class="text-xs md:text-base font-extrabold tracking-wider uppercase font-sans text-[#3d271a]">
+                                COMANDO DE POLICIAMENTO DE APOIO OPERACIONAL
+                            </h2>
+                            <h1 class="text-3xl md:text-5xl font-black text-[#23150d] tracking-tight uppercase my-0.5 font-sans">
+                                EXTRATO DE SERVIÇO
+                            </h1>
+                            <p class="text-xs md:text-sm font-semibold text-[#422d20] tracking-tight">
+                                Consolidador de dados das OPMs subordinadas para geração automática do Relatório.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="banner-footer px-6 md:px-8 py-2.5 flex items-center gap-3 text-white">
+                    <div class="flex flex-col items-center justify-center text-amber-500 font-black text-xs leading-none">
+                        <i class="fa-solid fa-angles-up text-sm"></i>
+                    </div>
+                    <div class="h-4 w-[1px] bg-white/20"></div>
+                    <span class="text-xs font-medium tracking-wide text-neutral-200">
+                        Powered by <strong class="font-bold text-white">CPAp / Cpode / Sgt PM Freitas</strong>
+                    </span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-5 border border-neutral-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="user-avatar" class="w-8 h-8 rounded-full bg-[#7a624a]/20 text-[#7a624a] flex items-center justify-center font-bold text-xs uppercase">DF</div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <p id="user-email-display" class="text-xs font-bold text-neutral-800">djalmafreitass@gmail.com</p>
+                            <button type="button" onclick="openAccountModal()" class="text-xs text-blue-600 hover:text-blue-800 hover:underline font-semibold">Mudar de conta</button>
+                        </div>
+                        <p class="text-[11px] text-neutral-500 mt-0.5">Os dados informados são salvos automaticamente no navegador.</p>
+                    </div>
+                </div>
+            </div>
+
+            <form id="cpap-main-form" onsubmit="handleFormSubmission(event)" class="space-y-6">
+                <!-- PARTE 1: Cabeçalho & Supervisão Geral -->
+                <div class="google-card p-6 border-l-4 border-transparent hover:border-neutral-300 focus-within:google-focused-card" onclick="focusCard(this)">
+                    <h3 class="text-base font-bold text-cpap-darkBrown mb-4 border-b border-neutral-100 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-[#7a624a]"></i> 1. Cabeçalho &amp; Supervisão Geral
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Data Base <span class="text-red-500">*</span></label>
+                            <input type="text" id="form-date" required class="w-full border-b border-neutral-300 focus:border-[#7a624a] outline-none py-1.5 text-sm text-neutral-800 font-semibold bg-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Turno <span class="text-red-500">*</span></label>
+                            <input type="text" id="form-turno" required class="w-full border-b border-neutral-300 focus:border-[#7a624a] outline-none py-1.5 text-sm text-neutral-800 font-semibold bg-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Superior de Dia <span class="text-red-500">*</span></label>
+                            <input type="text" id="form-superior" required class="w-full border-b border-neutral-300 focus:border-[#7a624a] outline-none py-1.5 text-sm text-neutral-800 font-semibold bg-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6 pt-4 border-t border-neutral-100">
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">CICOC</label>
+                            <input type="text" id="form-cicoc" class="w-full border-b border-neutral-300 focus:border-[#7a624a] outline-none py-1 text-xs text-neutral-800 font-semibold bg-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Coord. CICOM</label>
+                            <input type="text" id="form-cicom" class="w-full border-b border-neutral-300 focus:border-[#7a624a] outline-none py-1 text-xs text-neutral-800 font-semibold bg-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Videomonitoramento</label>
+                            <input type="text" id="form-video" class="w-full border-b border-neutral-300 focus:border-[#7a624a] outline-none py-1 text-xs text-neutral-800 font-semibold bg-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Operador CPAP</label>
+                            <input type="text" id="form-operador" class="w-full border-b border-neutral-300 focus:border-[#7a624a] outline-none py-1 text-xs text-neutral-800 font-semibold bg-transparent">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PARTE 2: Serviço Extraordinário Ativo -->
+                <div class="google-card p-6 border-l-4 border-transparent hover:border-neutral-300 focus-within:google-focused-card" onclick="focusCard(this)">
+                    <div class="flex items-center justify-between mb-4 border-b border-neutral-100 pb-2">
+                        <h3 class="text-base font-bold text-cpap-darkBrown flex items-center gap-2">
+                            <i class="fa-solid fa-users-viewfinder text-[#7a624a]"></i> 2. Serviço Extraordinário Ativo
+                        </h3>
+                        <button type="button" onclick="addNewExtraordinaryOperation()" class="px-3 py-1 bg-[#7a624a] hover:bg-cpap-darkBrown text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-plus"></i> Nova Operação
+                        </button>
+                    </div>
+                    
+                    <p class="text-xs text-neutral-500 mb-4">Adicione e edite as operações extraordinárias ativas para consolidar os recursos globais no infográfico.</p>
+                    
+                    <div id="extraordinary-operations-list" class="space-y-6">
+                        <!-- Gerado dinamicamente por JS -->
+                    </div>
+                </div>
+
+                <!-- PARTE 3: Dados Detalhados das OPMs -->
+                <div class="google-card p-6 border-l-4 border-transparent hover:border-neutral-300 focus-within:google-focused-card" onclick="focusCard(this)">
+                    <div class="flex items-center justify-between mb-4 border-b border-neutral-100 pb-2">
+                        <h3 class="text-base font-bold text-cpap-darkBrown flex items-center gap-2">
+                            <i class="fa-solid fa-users-viewfinder text-[#7a624a]"></i> 3. Dados Detalhados das OPMs
+                        </h3>
+                        <span class="text-xs bg-[#7a624a]/10 text-[#7a624a] font-bold px-2 py-0.5 rounded">11 Unidades</span>
+                    </div>
+                    <p class="text-xs text-neutral-500 mb-6">Insira os dados individuais de cada OPM. Os totais serão calculados e renderizados de forma inteligente.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="opm-cards-container">
+                        <!-- Os cards de OPMs serão injetados dinamicamente via JS -->
+                    </div>
+                </div>
+
+                <!-- Botões do Console -->
+                <div class="flex items-center justify-between pt-4">
+                    <button type="button" onclick="openResetModal()" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-700 font-bold rounded-lg border border-red-200 text-sm transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can"></i> Limpar Formulário
+                    </button>
+                    <button type="submit" class="px-8 py-3 bg-[#7a624a] hover:bg-cpap-darkBrown text-white font-black rounded-lg shadow transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Gerar Extrato Final <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- TAB 2: EXTRATO FINAL (INFOGRÁFICO DE ALTA FIDELIDADE + TEXTO) -->
+        <section id="tab-content-dashboard-view" class="w-full max-w-5xl mx-auto space-y-6 hidden">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-neutral-200 shadow-sm no-print">
+                <div>
+                    <h2 class="text-xl font-black text-cpap-darkBrown">Fechamento Concluído!</h2>
+                    <p class="text-xs text-neutral-500">O infográfico e o relatório em texto foram gerados. Prontos para cópia ou exportação.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center bg-neutral-100 rounded-lg p-1 border border-neutral-300">
+                        <span class="text-xs font-bold text-neutral-500 px-2 uppercase">Modo Impressão:</span>
+                        <select id="print-mode-select" onchange="updatePrintModeClasses()" class="bg-white text-xs font-bold text-[#7a624a] border border-neutral-200 rounded px-2 py-1 outline-none">
+                            <option value="graphic-only">Apenas Gráfico (1 Página)</option>
+                            <option value="complete">Completo (Gráfico + Texto)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="copyFormattedReportToClipboard()" class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg flex items-center gap-2 transition-all shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-copy"></i> Copiar Texto para WhatsApp
+                    </button>
+                    <button onclick="window.print()" class="px-4 py-2.5 bg-[#7a624a] hover:bg-cpap-darkBrown text-white text-xs font-bold rounded-lg flex items-center gap-2 transition-all shadow-sm">
+                        <i class="fa-solid fa-print"></i> Imprimir / Gerar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- ÁREA GERAL DE IMPRESSÃO -->
+            <div id="print-consolidated-area" class="print-area bg-[#fcfaf6] p-8 rounded-2xl border border-[#dfd6ca] shadow-md text-[#332511]">
+                
+                <!-- Card do Gráfico Consolidado -->
+                <div class="print-graphic-card">
+                    <div class="grid grid-cols-12 items-center border-b border-[#dfd6ca] pb-6 mb-6 gap-4">
+                        <div class="col-span-12 md:col-span-2 flex justify-center md:justify-start">
+                            <div class="relative w-28 h-28 flex items-center justify-center bg-white rounded-full border-4 border-[#7a624a] shadow-sm overflow-hidden p-0">
+                                <img src="image_8e9d5b.png" alt="CPAp Logo" class="w-full h-full object-cover scale-[1.15] cpap-logo-target" data-logo-style="infographic" onerror="handleLogoFallback(this)">
+                            </div>
+                        </div>
+                        <div class="col-span-12 md:col-span-8 text-center md:text-left">
+                            <h3 class="text-xl md:text-2xl font-black tracking-tight text-[#1f160e] font-sans leading-tight">
+                                COMANDO DE POLICIAMENTO DE APOIO OPERACIONAL - CPAp
+                            </h3>
+                            <h4 class="text-2xl md:text-3xl font-black tracking-wide text-[#1f160e] uppercase mt-1">
+                                EFETIVO E VIATURAS EMPREGADAS
+                            </h4>
+                            <h5 class="text-xl md:text-2xl font-bold tracking-normal text-[#1f160e] mt-1">
+                                EM TODO CPAp
+                            </h5>
+                        </div>
+                        <div class="col-span-12 md:col-span-2 flex justify-center md:justify-end">
+                            <div class="bg-[#eae2d8]/50 border border-[#dfd6ca] px-4 py-3 rounded-lg text-center w-36">
+                                <span class="block text-xs font-bold uppercase tracking-wider text-[#7a624a]">Data Base</span>
+                                <span id="lbl-output-date" class="block text-lg font-black text-[#1f160e] mt-1">08/07/2026</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TOP CARDS / KPIs EXATAMENTE COM 6 QUADROS -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+                        <div class="bg-white border border-[#dfd6ca] rounded-xl p-4 flex flex-col justify-between items-center text-center shadow-sm">
+                            <span class="text-[10px] font-extrabold uppercase text-[#7a624a] tracking-tight leading-tight flex items-center gap-1.5">
+                                <i class="fa-solid fa-car text-xl"></i> VIATURAS QUATRO RODAS
+                            </span>
+                            <div id="kpi-output-v4r" class="text-3xl sm:text-4xl font-black text-[#1f160e] my-2">39</div>
+                            <div id="kpi-pct-v4r" class="text-xs font-bold text-neutral-500">(58,2%)</div>
+                        </div>
+
+                        <div class="bg-white border border-[#dfd6ca] rounded-xl p-4 flex flex-col justify-between items-center text-center shadow-sm">
+                            <span class="text-[10px] font-extrabold uppercase text-[#7a624a] tracking-tight leading-tight flex items-center gap-1.5">
+                                <i class="fa-solid fa-motorcycle text-xl"></i> VIATURAS DUAS RODAS
+                            </span>
+                            <div id="kpi-output-v2r" class="text-3xl sm:text-4xl font-black text-[#1f160e] my-2">23</div>
+                            <div id="kpi-pct-v2r" class="text-xs font-bold text-neutral-500">(34,3%)</div>
+                        </div>
+
+                        <div class="bg-white border border-[#dfd6ca] rounded-xl p-4 flex flex-col justify-between items-center text-center shadow-sm">
+                            <span class="text-[10px] font-extrabold uppercase text-[#7a624a] tracking-tight leading-tight flex items-center gap-1.5">
+                                <i class="fa-solid fa-truck-monster text-xl"></i> BASES MÓVEIS
+                            </span>
+                            <div id="kpi-output-bm" class="text-3xl sm:text-4xl font-black text-[#1f160e] my-2">05</div>
+                            <div id="kpi-pct-bm" class="text-xs font-bold text-neutral-500">(7,5%)</div>
+                        </div>
+
+                        <div class="bg-white border border-[#dfd6ca] rounded-xl p-4 flex flex-col justify-between items-center text-center shadow-sm">
+                            <span class="text-[10px] font-extrabold uppercase text-[#7a624a] tracking-tight leading-tight flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-shield text-xl"></i> EFETIVO ORDINÁRIO
+                            </span>
+                            <div id="kpi-output-efe-ope" class="text-3xl sm:text-4xl font-black text-[#1f160e] my-2">284</div>
+                            <div id="kpi-pct-efe-ope" class="text-xs font-bold text-neutral-500">(87,9%)</div>
+                        </div>
+
+                        <div class="bg-white border border-[#dfd6ca] rounded-xl p-4 flex flex-col justify-between items-center text-center shadow-sm">
+                            <span class="text-[10px] font-extrabold uppercase text-[#7a624a] tracking-tight leading-tight flex items-center gap-1.5">
+                                <i class="fa-solid fa-person-walking text-xl"></i> POLICIAMENTO À PÉ
+                            </span>
+                            <div id="kpi-output-efe-pe" class="text-3xl sm:text-4xl font-black text-[#1f160e] my-2">00</div>
+                            <div id="kpi-pct-efe-pe" class="text-xs font-bold text-neutral-500">(0,0%)</div>
+                        </div>
+
+                        <div class="bg-white border border-[#dfd6ca] rounded-xl p-4 flex flex-col justify-between items-center text-center shadow-sm">
+                            <span class="text-[10px] font-extrabold uppercase text-[#7a624a] tracking-tight leading-tight flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-plus text-xl"></i> EFETIVO EXTRAORDINÁRIO
+                            </span>
+                            <div id="kpi-output-efe-extra" class="text-3xl sm:text-4xl font-black text-[#1f160e] my-2">22</div>
+                            <div id="kpi-pct-efe-extra" class="text-xs font-bold text-neutral-500">(6,8%)</div>
+                        </div>
+                    </div>
+
+                    <!-- Gráficos de Distribuição -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+                        <div class="col-span-12 lg:col-span-3 bg-white border border-[#dfd6ca] rounded-xl overflow-hidden shadow-sm flex flex-col">
+                            <div class="bg-[#7a624a] text-white font-bold text-center py-2.5 uppercase tracking-wide text-xs">
+                                Viaturas por Tipo
+                            </div>
+                            <div class="p-4 flex flex-row items-center justify-around flex-grow gap-2">
+                                <div class="w-24 h-24 relative flex-shrink-0">
+                                    <canvas id="chart-output-viaturas"></canvas>
+                                </div>
+                                <div class="flex flex-col gap-1.5 text-[11px]">
+                                    <div>
+                                        <p class="font-bold text-[#1f160e]">4R: <span id="lbl-chart-v4r-val">34</span></p>
+                                        <p class="text-neutral-400 text-[10px]" id="lbl-chart-v4r-pct">0%</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-[#1f160e]">2R: <span id="lbl-chart-v2r-val">17</span></p>
+                                        <p class="text-neutral-400 text-[10px]" id="lbl-chart-v2r-pct">0%</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-[#1f160e]">BM: <span id="lbl-chart-bm-val">4</span></p>
+                                        <p class="text-neutral-400 text-[10px]" id="lbl-chart-bm-pct">0%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-12 lg:col-span-4 bg-white border border-[#dfd6ca] rounded-xl overflow-hidden shadow-sm flex flex-col">
+                            <div class="bg-[#7a624a] text-white font-bold text-center py-2.5 uppercase tracking-wide text-xs">
+                                Efetivo por Função
+                            </div>
+                            <div class="p-4 flex flex-row items-center justify-around flex-grow gap-2">
+                                <div class="w-24 h-24 relative flex-shrink-0">
+                                    <canvas id="chart-output-efetivo"></canvas>
+                                </div>
+                                <div class="flex flex-col gap-1 text-[10px]">
+                                    <div>
+                                        <p class="font-bold text-[#1f160e]">Efe. Operacional Ordinário: <span id="lbl-chart-ope-val">274</span></p>
+                                        <p class="text-neutral-400 text-[9px]" id="lbl-chart-ope-pct">0%</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-[#1f160e]">Efe. Operacional Extraordinário: <span id="lbl-chart-extra-val">0</span></p>
+                                        <p class="text-neutral-400 text-[9px]" id="lbl-chart-extra-pct">0%</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-[#1f160e]">Policiamento à Pé das OPMs: <span id="lbl-chart-pe-val">0</span></p>
+                                        <p class="text-neutral-400 text-[9px]" id="lbl-chart-pe-pct">0%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-12 lg:col-span-5 bg-white border border-[#dfd6ca] rounded-xl overflow-hidden shadow-sm flex flex-col">
+                            <div class="bg-[#ca9b84] text-[#332511] font-bold text-center py-2.5 uppercase tracking-wide text-xs flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-layer-group"></i> Recursos por Operação Extraordinária
+                            </div>
+                            <div id="extra-panel-container" class="p-4 flex-grow relative min-h-[140px] flex items-center justify-center">
+                                <canvas id="chart-output-extraordinario"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
+                        <div class="flex items-center justify-between bg-[#eae2d8]/30 border border-[#dfd6ca] rounded-lg p-3">
+                            <span class="text-xs font-black uppercase tracking-widest text-[#1f160e] pl-2">Total de Viaturas</span>
+                            <div id="tot-output-vtr" class="bg-white border border-[#dfd6ca] px-6 py-1 rounded-md font-black text-lg text-center min-w-[80px]">55</div>
+                        </div>
+                        <div class="flex items-center justify-between bg-[#eae2d8]/30 border border-[#dfd6ca] rounded-lg p-3">
+                            <span class="text-xs font-black uppercase tracking-widest text-[#1f160e] pl-2">Total de Efetivo Operacional</span>
+                            <div id="tot-output-efe" class="bg-white border border-[#dfd6ca] px-6 py-1 rounded-md font-black text-lg text-center min-w-[80px]">290</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. ESTRUTURA DE TEXTO OPERACIONAL -->
+                <div class="print-hidden-text-report bg-white rounded-xl border border-[#dfd6ca] p-8 font-sans text-[#1f160e] space-y-6 leading-relaxed max-w-4xl mx-auto shadow-sm mt-8">
+                    <div class="space-y-1 border-b border-neutral-100 pb-4">
+                        <p class="text-base font-extrabold text-neutral-900">POLÍCIA MILITAR DA BAHIA</p>
+                        <p class="text-sm font-bold text-neutral-700">COMANDO DE POLICIAMENTO DE APOIO OPERACIONAL</p>
+                        <p class="text-xs font-semibold text-neutral-500">COORDENAÇÃO OPERACIONAL</p>
+                        <div class="pt-4 space-y-1">
+                            <p class="text-sm font-bold">DATA: <span id="txt-out-date" class="font-normal">08/07/2026</span></p>
+                            <p class="text-sm font-bold">TURNO: <span id="txt-out-turno" class="font-normal">14h às 22h</span></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-neutral-50 p-4 rounded-lg border border-neutral-200">
+                        <div>
+                            <p class="text-xs font-bold text-neutral-500 uppercase">Superior de Dia</p>
+                            <p id="txt-out-superior" class="text-sm font-bold text-neutral-800">Ten Cel PM</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-neutral-500 uppercase">Coordenação CPAp</p>
+                            <p id="txt-out-coord-cpap-label" class="text-sm font-bold text-neutral-800">CAP PM ROSENDO</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 text-sm font-semibold text-neutral-800">
+                        <p class="text-xs font-bold text-neutral-500 uppercase mb-2">Supervisão Operacional de Suporte</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>CICOC: <span id="txt-out-cicoc">MAJ PM ADRIANO</span></li>
+                            <li>Coord. CICOM: <span id="txt-out-cicom">CAP PM ELIÓMARIO</span></li>
+                            <li>Videomonitoramento: <span id="txt-out-video">CAP PM ELIÚDE</span></li>
+                            <li>OPERADOR CPAP: <span id="txt-out-operador">SD PM ESPÍRITO (TEL. 99903-8478)</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-6 pt-4 border-t border-neutral-100" id="txt-out-opm-list">
+                        <!-- Preenchido via JS -->
+                    </div>
+
+                    <div class="space-y-4 pt-4 border-t border-neutral-100" id="txt-out-extraordinary-container">
+                        <p class="text-sm font-bold uppercase tracking-wider text-[#7a624a]">
+                            SERVIÇO EXTRAORDINÁRIO ATIVO (<span id="txt-out-extraordinary-count">0</span>):
+                        </p>
+                        <div id="txt-out-extraordinary-list" class="space-y-4">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-neutral-200 text-sm font-bold space-y-1">
+                        <p class="text-[#7a624a] uppercase tracking-widest text-xs mb-2">EFETIVO E VIATURAS EMPREGADAS EM TODO CPAp</p>
+                        <p>▶️ 🚔 Quatro rodas: <span id="txt-out-tot-v4r" class="font-normal">34</span></p>
+                        <p>▶️ 🏍️ Duas rodas: <span id="txt-out-tot-v2r" class="font-normal">17</span></p>
+                        <p>▶️ 🚛 Base Móvel: <span id="txt-out-tot-bm" class="font-normal">04</span></p>
+                        <p>▶️ Efetivo Operacional Ordinário: <span id="txt-out-formula-ope" class="font-normal">136 + 104 (BG) + 34 (CIPFaz) = 274</span></p>
+                        <p>▶️ 👮 Efetivo Operacional Extraordinário: <span id="txt-out-tot-extra" class="font-normal">00</span></p>
+                        <p>▶️ 👮 Policiamento à Pé das OPMs: <span id="txt-out-tot-pe" class="font-normal">00</span></p>
+                        <p>▶️ 👮 Efetivo Administrativo: <span id="txt-out-tot-adm" class="font-normal">16</span></p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE MUDANÇA DE CONTA -->
+    <div id="account-modal" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center hidden no-print">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 mx-4 animate-in fade-in zoom-in-95 duration-200">
+            <h3 class="text-lg font-bold text-neutral-800 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-circle-user text-[#7a624a]"></i> Mudar de conta
+            </h3>
+            <p class="text-xs text-neutral-500 mb-4">Insira o e-mail que deseja utilizar para preencher este extrato de serviço.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-neutral-400 uppercase mb-1">E-mail do Operador</label>
+                    <input type="email" id="modal-email-input" class="w-full border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:border-[#7a624a] focus:ring-1 focus:ring-[#7a624a] outline-none" placeholder="exemplo@gmail.com">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 text-xs font-bold mt-6">
+                <button onclick="closeAccountModal()" class="px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors">Cancelar</button>
+                <button onclick="saveAccountEmail()" class="px-5 py-2 bg-[#7a624a] text-white hover:bg-cpap-darkBrown rounded-lg transition-colors shadow">Salvar Alteração</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO DE LIMPEZA DO FORMULÁRIO -->
+    <div id="reset-modal" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center hidden no-print">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 mx-4 animate-in fade-in zoom-in-95 duration-200">
+            <h3 class="text-lg font-bold text-neutral-800 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-red-600"></i> Limpar Formulário
+            </h3>
+            <p class="text-xs text-neutral-500 mb-6">Deseja realmente apagar todos os dados preenchidos? Esta ação limpará o formulário do navegador e restaurará o estado inicial.</p>
+            
+            <div class="flex justify-end gap-2 text-xs font-bold">
+                <button onclick="closeResetModal()" class="px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors">Cancelar</button>
+                <button onclick="confirmClearForm()" class="px-5 py-2 bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors shadow">Apagar Tudo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA DO SISTEMA + PERSISTÊNCIA E CÓPIA INTELIGENTE -->
+    <script>
+        /* ==========================================================================
+           MEDIDAS DE SEGURANÇA E BLOQUEIO DE CÓPIA MANUAL (FRONT-END)
+           ========================================================================== */
+
+        // Sinalizador para permitir a cópia do texto quando solicitada pelo botão do WhatsApp
+        let isProgrammaticCopying = false;
+
+        // 1. Bloqueia o clique com o botão direito (Menu de contexto)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 2. Bloqueia os eventos nativos de Copiar e Recortar manuais
+        document.addEventListener('copy', function(e) {
+            if (!isProgrammaticCopying) {
+                e.preventDefault();
+            }
+        });
+        document.addEventListener('cut', function(e) {
+            e.preventDefault();
+        });
+
+        // 3. Bloqueia atalhos de teclado (Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U, F12, DevTools)
+        document.addEventListener('keydown', function(e) {
+            const key = e.key.toLowerCase();
+            
+            if (!isProgrammaticCopying && e.ctrlKey && ['c', 'x', 'u', 'a', 's'].includes(key)) {
+                e.preventDefault();
+            }
+            
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+            
+            if (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(key)) {
+                e.preventDefault();
+            }
+        });
+
+        /* ==========================================================================
+           ESTRUTURA DE DADOS E PERSISTÊNCIA LOCAL (LOCALSTORAGE)
+           ========================================================================== */
+
+        const DEFAULT_OPERATIONAL_DATA = {
+            date: "08/07/2026",
+            turno: "14h às 22h",
+            superiorDia: "Ten Cel PM",
+            cicoc: "MAJ PM ADRIANO",
+            cicom: "CAP PM ELIÓMARIO",
+            video: "CAP PM ELIÚDE",
+            operador: "SD PM ESPÍRITO (TEL. 99903-8478)",
+
+            extraordinaryOperations: [
+                { id: 1, name: "OPERAÇÃO PAZ NAS VIAS", commander: "CAP PM SOUZA", vtr_4r: 2, vtr_2r: 4, bases: 0, extra_efetivo: 10 },
+                { id: 2, name: "OPERAÇÃO BARRA SALVADOR", commander: "TEN PM ALMEIDA", vtr_4r: 1, vtr_2r: 2, bases: 1, extra_efetivo: 12 }
+            ],
+
+            units: [
+                { key: "cpap", name: "CPAp", coordinator: "CAP PM ROSENDO", tel: "71 8605-6833", vtr_4r: 1, vtr_2r: 0, bases: 0, operacional: 3, adm: 0, pe: 0, extraText: "" },
+                { key: "bpesc", name: "BPESC", coordinator: "ANATALIA", tel: "71 99982-2124", vtr_4r: 5, vtr_2r: 0, bases: 0, operacional: 15, adm: 2, pe: 0, extraText: "" },
+                { key: "bptur", name: "BPTUR", coordinator: "SUBTEN PM JAN", tel: "71 99660-4420", vtr_4r: 4, vtr_2r: 2, bases: 3, operacional: 21, adm: 3, pe: 0, extraText: "" },
+                { key: "bppm", name: "BPPM", coordinator: "SUBTEN PM AMARAL", tel: "71 999677421", vtr_4r: 4, vtr_2r: 0, bases: 1, operacional: 19, adm: 2, pe: 0, extraText: "" },
+                { key: "bpfrc", name: "BPFRC (Gêmeos)", coordinator: "CAP PM DANILO OLIVEIRA", tel: "71 98881-1220", vtr_4r: 6, vtr_2r: 0, bases: 0, operacional: 19, adm: 2, pe: 0, extraText: "" },
+                { key: "bpgd", name: "BPGd", coordinator: "SUBTEN PM AJAX DIAS", tel: "71 99976-7849", vtr_4r: 2, vtr_2r: 0, bases: 0, operacional: 104, adm: 0, pe: 0, extraText: "Interno: " },
+                { key: "aguia", name: "ESQD MCL ÁGUIA", coordinator: "SUBTEN PM MORAES", tel: "71 996949183", vtr_4r: 1, vtr_2r: 10, bases: 0, operacional: 19, adm: 2, pe: 0, extraText: "" },
+                { key: "bpfrv", name: "BPFRV (Apolo)", coordinator: "CAP PM PEDRO FREITAS", tel: "71 99117-1714", vtr_4r: 6, vtr_2r: 0, bases: 0, operacional: 21, adm: 2, pe: 0, extraText: "" },
+                { key: "bpeo", name: "BPEO", coordinator: "TEN PM MARCOS", tel: "71 99979-9603", vtr_4r: 3, vtr_2r: 5, bases: 0, operacional: 19, adm: 3, pe: 0, extraText: "Radiopatrulhamento" },
+                { key: "cipfaz", name: "CIPFAZ", coordinator: "SUBTEN PM MARIO BEZERRA (07h-07h)", tel: "71 99924-1475", vtr_4r: 2, vtr_2r: 0, bases: 0, operacional: 34, adm: 0, pe: 0, extraText: "Viaturas: PKF 2614, SGL4B58" },
+                { key: "cimcau", name: "CIMCAU", coordinator: "CAP PM ALMEIDA", tel: "71 99999-9999", vtr_4r: 2, vtr_2r: 0, bases: 0, operacional: 10, adm: 1, pe: 0, extraText: "" }
+            ]
+        };
+
+        let operationalData = JSON.parse(JSON.stringify(DEFAULT_OPERATIONAL_DATA));
+
+        let chartViaturasInstance = null;
+        let chartEfetivoInstance = null;
+        let chartExtraordinarioInstance = null;
+
+        // Função de salvamento local continuo
+        function saveStateToLocalStorage() {
+            try {
+                localStorage.setItem('cpap_saved_form_data', JSON.stringify(operationalData));
+            } catch (e) {
+                console.error("Erro ao gravar dados no LocalStorage:", e);
+            }
+        }
+
+        function loadStateFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('cpap_saved_form_data');
+                if (saved) {
+                    operationalData = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error("Erro ao carregar do LocalStorage:", e);
+            }
+        }
+
+        function handleLogoFallback(imgElement) {
+            const styleType = imgElement.getAttribute('data-logo-style') || 'header';
+            let sizeClasses = "h-10 w-10";
+            if (styleType === "banner") sizeClasses = "w-full h-full";
+            if (styleType === "watermark") sizeClasses = "w-full h-full rotate-12";
+            if (styleType === "infographic") sizeClasses = "w-28 h-28";
+
+            const svgRepresentation = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" class="${sizeClasses}">
+                    <circle cx="60" cy="60" r="56" fill="#1b365d" stroke="#d9a74a" stroke-width="2.5"/>
+                    <circle cx="60" cy="60" r="46" fill="#ffffff" stroke="#1b365d" stroke-width="2"/>
+                    <text x="60" y="65" font-family="Inter, sans-serif" font-weight="900" font-size="12" fill="#1b365d" text-anchor="middle" letter-spacing="0.5">PMBA</text>
+                </svg>
+            `;
+            const container = document.createElement('div');
+            container.className = "flex items-center justify-center " + (imgElement.className || "");
+            container.innerHTML = svgRepresentation;
+            imgElement.parentNode.replaceChild(container, imgElement);
+        }
+
+        window.addEventListener('load', () => {
+            loadStateFromLocalStorage();
+            const savedEmail = localStorage.getItem('cpap_user_email') || 'djalmafreitass@gmail.com';
+            updateEmailDisplay(savedEmail);
+            loadFormFromState();
+            updatePrintModeClasses();
+
+            // Sincroniza escuta de digitação contínua em todo o formulário
+            document.getElementById('cpap-main-form').addEventListener('input', () => {
+                syncFormInputsToState();
+                saveStateToLocalStorage();
+            });
+        });
+
+        function openAccountModal() {
+            const currentEmail = document.getElementById('user-email-display').innerText;
+            document.getElementById('modal-email-input').value = currentEmail;
+            document.getElementById('account-modal').classList.remove('hidden');
+        }
+
+        function closeAccountModal() { document.getElementById('account-modal').classList.add('hidden'); }
+
+        function saveAccountEmail() {
+            const emailInput = document.getElementById('modal-email-input').value.trim();
+            if (emailInput && emailInput.includes('@')) {
+                localStorage.setItem('cpap_user_email', emailInput);
+                updateEmailDisplay(emailInput);
+                closeAccountModal();
+                showToast("Conta alterada com sucesso!", "green");
+            } else {
+                showToast("Por favor, insira um endereço de e-mail válido.", "red");
+            }
+        }
+
+        function updateEmailDisplay(email) {
+            document.getElementById('user-email-display').innerText = email;
+            const initials = email.split('@')[0].substring(0, 2).toUpperCase();
+            document.getElementById('user-avatar').innerText = initials;
+        }
+
+        function renderExtraordinaryOperationsForm() {
+            const listContainer = document.getElementById('extraordinary-operations-list');
+            listContainer.innerHTML = '';
+
+            if (operationalData.extraordinaryOperations.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-6 bg-neutral-100 rounded-lg text-neutral-400 font-semibold text-xs border border-dashed border-neutral-300">
+                        Nenhuma operação extraordinária ativa. Clique em "Nova Operação" para adicionar.
+                    </div>
+                `;
+                return;
+            }
+
+            operationalData.extraordinaryOperations.forEach((op, idx) => {
+                const opBlock = document.createElement('div');
+                opBlock.className = "p-4 bg-neutral-50 rounded-xl border border-neutral-200 relative space-y-4 shadow-sm";
+                opBlock.innerHTML = `
+                    <button type="button" onclick="deleteExtraordinaryOperation(${op.id})" class="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs font-bold transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-trash-can"></i> Excluir
+                    </button>
+                    
+                    <div class="flex items-center gap-2 border-b border-neutral-200 pb-1.5 mr-16">
+                        <span class="w-5 h-5 rounded-full bg-[#7a624a] text-white flex items-center justify-center text-[10px] font-bold">${idx + 1}</span>
+                        <h4 class="text-xs font-bold text-cpap-darkBrown uppercase">Dados da Operação</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase">Nome da Operação</label>
+                            <input type="text" id="op-name-${op.id}" value="${op.name}" onchange="updateExtraordinaryOpField(${op.id}, 'name', this.value.toUpperCase())" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-semibold text-neutral-800 focus:border-[#7a624a] outline-none" placeholder="Ex: OPERAÇÃO PAZ NAS VIAS">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase">Comandante da Operação</label>
+                            <input type="text" id="op-com-${op.id}" value="${op.commander}" onchange="updateExtraordinaryOpField(${op.id}, 'commander', this.value.toUpperCase())" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-semibold text-neutral-800 focus:border-[#7a624a] outline-none" placeholder="Ex: CAP PM SOUZA">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase">Viaturas 4R</label>
+                            <input type="number" id="op-v4r-${op.id}" value="${op.vtr_4r}" onchange="updateExtraordinaryOpField(${op.id}, 'vtr_4r', parseInt(this.value) || 0)" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase">Viaturas 2R</label>
+                            <input type="number" id="op-v2r-${op.id}" value="${op.vtr_2r}" onchange="updateExtraordinaryOpField(${op.id}, 'vtr_2r', parseInt(this.value) || 0)" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase">Base Móvel</label>
+                            <input type="number" id="op-bm-${op.id}" value="${op.bases}" onchange="updateExtraordinaryOpField(${op.id}, 'bases', parseInt(this.value) || 0)" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-amber-800 uppercase">EFETIVO EXTRAORDINÁRIO</label>
+                            <input type="number" id="op-extra-efe-${op.id}" value="${op.extra_efetivo || 0}" onchange="updateExtraordinaryOpField(${op.id}, 'extra_efetivo', parseInt(this.value) || 0)" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(opBlock);
+            });
+        }
+
+        function addNewExtraordinaryOperation() {
+            const newOp = { id: Date.now(), name: "", commander: "", vtr_4r: 0, vtr_2r: 0, bases: 0, extra_efetivo: 0 };
+            operationalData.extraordinaryOperations.push(newOp);
+            renderExtraordinaryOperationsForm();
+            saveStateToLocalStorage();
+            showToast("Nova operação adicionada!", "green");
+        }
+
+        function deleteExtraordinaryOperation(id) {
+            operationalData.extraordinaryOperations = operationalData.extraordinaryOperations.filter(op => op.id !== id);
+            renderExtraordinaryOperationsForm();
+            saveStateToLocalStorage();
+            showToast("Operação removida.", "red");
+        }
+
+        function updateExtraordinaryOpField(id, field, value) {
+            const op = operationalData.extraordinaryOperations.find(o => o.id === id);
+            if (op) {
+                op[field] = value;
+                saveStateToLocalStorage();
+            }
+        }
+
+        function syncFormInputsToState() {
+            operationalData.date = document.getElementById('form-date').value;
+            operationalData.turno = document.getElementById('form-turno').value;
+            operationalData.superiorDia = document.getElementById('form-superior').value;
+            operationalData.cicoc = document.getElementById('form-cicoc').value;
+            operationalData.cicom = document.getElementById('form-cicom').value;
+            operationalData.video = document.getElementById('form-video').value;
+            operationalData.operador = document.getElementById('form-operador').value;
+
+            operationalData.units.forEach(u => {
+                const coordEl = document.getElementById(`unit-coord-${u.key}`);
+                const telEl = document.getElementById(`unit-tel-${u.key}`);
+                const opeEl = document.getElementById(`unit-ope-${u.key}`);
+                const v4rEl = document.getElementById(`unit-v4r-${u.key}`);
+                const v2rEl = document.getElementById(`unit-v2r-${u.key}`);
+                const bmEl = document.getElementById(`unit-bm-${u.key}`);
+                const admEl = document.getElementById(`unit-adm-${u.key}`);
+                const peEl = document.getElementById(`unit-pe-${u.key}`);
+                const extraEl = document.getElementById(`unit-extra-${u.key}`);
+
+                if (coordEl) u.coordinator = coordEl.value;
+                if (telEl) u.tel = telEl.value;
+                if (opeEl) u.operacional = parseInt(opeEl.value) || 0;
+                if (v4rEl) u.vtr_4r = parseInt(v4rEl.value) || 0;
+                if (v2rEl) u.vtr_2r = parseInt(v2rEl.value) || 0;
+                if (bmEl) u.bases = parseInt(bmEl.value) || 0;
+                if (admEl) u.adm = parseInt(admEl.value) || 0;
+                if (peEl) u.pe = parseInt(peEl.value) || 0;
+                if (extraEl) u.extraText = extraEl.value;
+            });
+        }
+
+        function loadFormFromState() {
+            document.getElementById('form-date').value = operationalData.date || "";
+            document.getElementById('form-turno').value = operationalData.turno || "";
+            document.getElementById('form-superior').value = operationalData.superiorDia || "";
+            document.getElementById('form-cicoc').value = operationalData.cicoc || "";
+            document.getElementById('form-cicom').value = operationalData.cicom || "";
+            document.getElementById('form-video').value = operationalData.video || "";
+            document.getElementById('form-operador').value = operationalData.operador || "";
+
+            renderExtraordinaryOperationsForm();
+
+            const container = document.getElementById('opm-cards-container');
+            container.innerHTML = '';
+
+            operationalData.units.forEach((u, i) => {
+                const card = document.createElement('div');
+                card.className = "bg-neutral-50 p-4 rounded-xl border border-neutral-200 space-y-4 shadow-sm";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-neutral-200 pb-2">
+                        <span class="text-xs font-black text-[#7a624a] uppercase tracking-wider">${u.name}</span>
+                        <span class="text-[10px] text-neutral-400 font-bold">Unidade ${i + 1}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase">Supervisor / Coord.</label>
+                            <input type="text" id="unit-coord-${u.key}" value="${u.coordinator}" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-semibold text-neutral-800 focus:border-[#7a624a] outline-none">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase">Telefone</label>
+                            <input type="text" id="unit-tel-${u.key}" value="${u.tel}" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-semibold text-neutral-800 focus:border-[#7a624a] outline-none">
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-neutral-500 uppercase">Viaturas 4R</label>
+                                <input type="number" id="unit-v4r-${u.key}" value="${u.vtr_4r}" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-neutral-500 uppercase">Viaturas 2R</label>
+                                <input type="number" id="unit-v2r-${u.key}" value="${u.vtr_2r}" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-neutral-500 uppercase">Base Móvel</label>
+                                <input type="number" id="unit-bm-${u.key}" value="${u.bases}" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-emerald-700 uppercase">Efetivo Operacional Ordinário</label>
+                                <input type="number" id="unit-ope-${u.key}" value="${u.operacional}" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-[#7a624a] uppercase">Policiamento à Pé OPM</label>
+                                <input type="number" id="unit-pe-${u.key}" value="${u.pe || 0}" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-neutral-500 uppercase">Efetivo ADM</label>
+                                <input type="number" id="unit-adm-${u.key}" value="${u.adm}" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs font-bold text-neutral-800 focus:border-[#7a624a] outline-none">
+                            </div>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase">Informação Adicional</label>
+                            <input type="text" id="unit-extra-${u.key}" value="${u.extraText}" placeholder="Nenhuma" class="w-full bg-white border border-neutral-300 rounded px-2 py-1 text-xs text-neutral-800 focus:border-[#7a624a] outline-none">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openResetModal() { document.getElementById('reset-modal').classList.remove('hidden'); }
+        function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
+
+        function confirmClearForm() {
+            localStorage.removeItem('cpap_saved_form_data');
+            operationalData = JSON.parse(JSON.stringify(DEFAULT_OPERATIONAL_DATA));
+            
+            loadFormFromState();
+            closeResetModal();
+            showToast("Formulário limpo com sucesso!", "red");
+        }
+
+        function focusCard(el) {
+            document.querySelectorAll('.google-card').forEach(c => c.classList.remove('google-focused-card'));
+            el.classList.add('google-focused-card');
+        }
+
+        function switchTab(tabId) {
+            document.getElementById('tab-content-form-view').classList.add('hidden');
+            document.getElementById('tab-content-dashboard-view').classList.add('hidden');
+            
+            document.querySelectorAll('nav button').forEach(b => {
+                b.className = "px-3 py-2 text-sm font-semibold rounded-lg text-neutral-600 hover:text-cpap-darkBrown hover:bg-neutral-100 transition-all flex items-center gap-2";
+            });
+
+            document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+            const activeTabBtn = document.getElementById(`tab-${tabId}`);
+            activeTabBtn.className = "px-3 py-2 text-sm font-semibold rounded-lg text-cpap-darkBrown bg-[#fcfaf6] border border-cpap-border transition-all flex items-center gap-2";
+            
+            if (tabId === 'dashboard-view') {
+                setTimeout(() => { renderConsolidatedExtrato(); }, 100);
+            }
+        }
+
+        function updatePrintModeClasses() {
+            const select = document.getElementById('print-mode-select');
+            const area = document.getElementById('print-consolidated-area');
+            if (select.value === 'graphic-only') {
+                area.classList.add('print-only-graphic');
+            } else {
+                area.classList.remove('print-only-graphic');
+            }
+        }
+
+        function handleFormSubmission(event) {
+            event.preventDefault();
+            syncFormInputsToState();
+            saveStateToLocalStorage();
+
+            renderConsolidatedExtrato();
+            switchTab('dashboard-view');
+            showToast("Extrato Operacional Consolidado!", "green");
+        }
+
+        function renderConsolidatedExtrato() {
+            let totalV4R = 0; let totalV2R = 0; let totalBM = 0;
+            let totalEfeExtra = 0;
+            let totalEfePeOPM = 0; let totalEfeOpeOrd = 0; let totalEfeAdm = 0;
+
+            let extNames = [];
+            let extV4RData = [];
+            let extV2RData = [];
+            let extBMData = [];
+            let extEfeData = [];
+
+            operationalData.extraordinaryOperations.forEach((op, index) => {
+                totalV4R += op.vtr_4r;
+                totalV2R += op.vtr_2r;
+                totalBM += op.bases;
+                totalEfeExtra += (op.extra_efetivo || 0);
+
+                extNames.push(op.name.trim() || `OPERAÇÃO ${index + 1}`);
+                extV4RData.push(op.vtr_4r);
+                extV2RData.push(op.vtr_2r);
+                extBMData.push(op.bases);
+                extEfeData.push(op.extra_efetivo || 0);
+            });
+
+            let totalBG = 0; let totalCIPFAZ = 0; let totalOutros = 0;
+
+            operationalData.units.forEach(u => {
+                totalV4R += u.vtr_4r; totalV2R += u.vtr_2r; totalBM += u.bases;
+                totalEfeOpeOrd += u.operacional; totalEfeAdm += u.adm; totalEfePeOPM += u.pe;
+
+                if (u.key === "bpgd") totalBG = u.operacional;
+                else if (u.key === "cipfaz") totalCIPFAZ = u.operacional;
+                else totalOutros += u.operacional;
+            });
+
+            const totalVtr = totalV4R + totalV2R + totalBM;
+            const totalEfetivoOperacional = totalEfeOpeOrd + totalEfeExtra + totalEfePeOPM;
+
+            document.getElementById('lbl-output-date').innerText = operationalData.date;
+            
+            document.getElementById('kpi-output-v4r').innerText = String(totalV4R).padStart(2, '0');
+            document.getElementById('kpi-output-v2r').innerText = String(totalV2R).padStart(2, '0');
+            document.getElementById('kpi-output-bm').innerText = String(totalBM).padStart(2, '0');
+            document.getElementById('kpi-output-efe-ope').innerText = String(totalEfeOpeOrd).padStart(2, '0');
+            document.getElementById('kpi-output-efe-pe').innerText = String(totalEfePeOPM).padStart(2, '0');
+            document.getElementById('kpi-output-efe-extra').innerText = String(totalEfeExtra).padStart(2, '0');
+
+            const pctV4R = totalVtr > 0 ? ((totalV4R / totalVtr) * 100).toFixed(1) : "0.0";
+            const pctV2R = totalVtr > 0 ? ((totalV2R / totalVtr) * 100).toFixed(1) : "0.0";
+            const pctBM = totalVtr > 0 ? ((totalBM / totalVtr) * 100).toFixed(1) : "0.0";
+
+            const pctOpe = totalEfetivoOperacional > 0 ? ((totalEfeOpeOrd / totalEfetivoOperacional) * 100).toFixed(1) : "0.0";
+            const pctExtra = totalEfetivoOperacional > 0 ? ((totalEfeExtra / totalEfetivoOperacional) * 100).toFixed(1) : "0.0";
+            const pctPe = totalEfetivoOperacional > 0 ? ((totalEfePeOPM / totalEfetivoOperacional) * 100).toFixed(1) : "0.0";
+
+            document.getElementById('kpi-pct-v4r').innerText = `(${pctV4R}%)`;
+            document.getElementById('kpi-pct-v2r').innerText = `(${pctV2R}%)`;
+            document.getElementById('kpi-pct-bm').innerText = `(${pctBM}%)`;
+            document.getElementById('kpi-pct-efe-ope').innerText = `(${pctOpe}%)`;
+            document.getElementById('kpi-pct-efe-pe').innerText = `(${pctPe}%)`;
+            document.getElementById('kpi-pct-efe-extra').innerText = `(${pctExtra}%)`;
+
+            document.getElementById('tot-output-vtr').innerText = totalVtr;
+            document.getElementById('tot-output-efe').innerText = totalEfetivoOperacional;
+
+            document.getElementById('lbl-chart-v4r-val').innerText = totalV4R;
+            document.getElementById('lbl-chart-v4r-pct').innerText = `${pctV4R}%`;
+            document.getElementById('lbl-chart-v2r-val').innerText = totalV2R;
+            document.getElementById('lbl-chart-v2r-pct').innerText = `${pctV2R}%`;
+            document.getElementById('lbl-chart-bm-val').innerText = totalBM;
+            document.getElementById('lbl-chart-bm-pct').innerText = `${pctBM}%`;
+
+            document.getElementById('lbl-chart-ope-val').innerText = totalEfeOpeOrd;
+            document.getElementById('lbl-chart-ope-pct').innerText = `${pctOpe}%`;
+            document.getElementById('lbl-chart-extra-val').innerText = totalEfeExtra;
+            document.getElementById('lbl-chart-extra-pct').innerText = `${pctExtra}%`;
+            document.getElementById('lbl-chart-pe-val').innerText = totalEfePeOPM;
+            document.getElementById('lbl-chart-pe-pct').innerText = `${pctPe}%`;
+
+            renderCharts(totalV4R, totalV2R, totalBM, totalEfeOpeOrd, totalEfeExtra, totalEfePeOPM, extNames, extV4RData, extV2RData, extBMData, extEfeData);
+
+            document.getElementById('txt-out-date').innerText = operationalData.date;
+            document.getElementById('txt-out-turno').innerText = operationalData.turno;
+            document.getElementById('txt-out-cicoc').innerText = operationalData.cicoc;
+            document.getElementById('txt-out-cicom').innerText = operationalData.cicom;
+            document.getElementById('txt-out-video').innerText = operationalData.video;
+            document.getElementById('txt-out-operador').innerText = operationalData.operador;
+            document.getElementById('txt-out-superior').innerText = operationalData.superiorDia;
+
+            const cpapUnit = operationalData.units.find(u => u.key === "cpap");
+            if (cpapUnit) document.getElementById('txt-out-coord-cpap-label').innerText = cpapUnit.coordinator;
+
+            const textOpmContainer = document.getElementById('txt-out-opm-list');
+            textOpmContainer.innerHTML = '';
+
+            // Renderiza as OPMs garantindo que todas utilizem "Supervisor"
+            operationalData.units.forEach(u => {
+                if (u.key === "cpap") return;
+
+                const block = document.createElement('div');
+                block.className = "text-sm";
+                
+                let extraLineHTML = "";
+                if(u.extraText && u.extraText.trim().length > 0) {
+                    extraLineHTML = `<p class="pl-4">${u.extraText.trim()}</p>`;
+                }
+
+                let coordLine = `<p class="pl-4">Supervisor: <strong class="font-bold">${u.coordinator}</strong></p>`;
+                let telLine = u.tel ? `<p class="pl-4">TEL:&nbsp; ${u.tel}</p>` : "";
+                
+                let vtrsLines = "";
+                if(u.vtr_4r > 0 && u.key !== "cipfaz") vtrsLines += `<p class="pl-4">Viatura 4 Rodas: ${String(u.vtr_4r).padStart(2, '0')}</p>`;
+                if(u.vtr_2r > 0) vtrsLines += `<p class="pl-4">Viaturas 2 Rodas: ${String(u.vtr_2r).padStart(2, '0')}</p>`;
+                if(u.bases > 0) vtrsLines += `<p class="pl-4">Base Móvel: ${String(u.bases).padStart(2, '0')}</p>`;
+
+                let efeLine = `<p class="pl-4">Efetivo: ${String(u.operacional).padStart(2, '0')}${u.key.match(/(bptur|aguia|bppm|bpfrc|bpfrv)/) ? ' PMS' : ''}</p>`;
+                let peLine = u.pe > 0 ? `<p class="pl-4">Policiamento à Pé: ${String(u.pe).padStart(2, '0')}</p>` : "";
+                let admLine = u.adm > 0 ? `<p class="pl-4">ADM: ${String(u.adm).padStart(2, '0')}${u.key === 'bppm' ? ' PM' : ''}</p>` : "";
+
+                block.innerHTML = `
+                    <p class="font-extrabold uppercase text-[#1f160e]">${u.name}</p>
+                    ${coordLine}
+                    ${telLine}
+                    ${vtrsLines}
+                    ${efeLine}
+                    ${peLine}
+                    ${admLine}
+                    ${extraLineHTML}
+                `;
+                textOpmContainer.appendChild(block);
+            });
+
+            document.getElementById('txt-out-extraordinary-count').innerText = operationalData.extraordinaryOperations.length;
+            const txtExtraordinaryList = document.getElementById('txt-out-extraordinary-list');
+            txtExtraordinaryList.innerHTML = '';
+            
+            if (operationalData.extraordinaryOperations.length === 0) {
+                txtExtraordinaryList.innerHTML = `<p class="text-xs text-neutral-500 italic">Nenhuma operação ativa.</p>`;
+            } else {
+                operationalData.extraordinaryOperations.forEach(op => {
+                    const opBlock = document.createElement('div');
+                    opBlock.className = "text-xs space-y-0.5 border-l-2 border-[#7a624a] pl-3";
+                    let resArr = [];
+                    if (op.vtr_4r > 0) resArr.push(`4R: ${String(op.vtr_4r).padStart(2, '0')}`);
+                    if (op.vtr_2r > 0) resArr.push(`2R: ${String(op.vtr_2r).padStart(2, '0')}`);
+                    if (op.bases > 0) resArr.push(`BM: ${String(op.bases).padStart(2, '0')}`);
+                    resArr.push(`Efetivo Extra: ${String(op.extra_efetivo || 0).padStart(2, '0')}`);
+
+                    opBlock.innerHTML = `
+                        <p class="font-bold uppercase text-neutral-800">${op.name || 'Operação'}</p>
+                        <p>Comandante: ${op.commander || 'Não informado'}</p>
+                        <p class="text-neutral-500 font-semibold">${resArr.join(" | ")}</p>
+                    `;
+                    txtExtraordinaryList.appendChild(opBlock);
+                });
+            }
+
+            document.getElementById('txt-out-tot-v4r').innerText = String(totalV4R).padStart(2, '0');
+            document.getElementById('txt-out-tot-v2r').innerText = String(totalV2R).padStart(2, '0');
+            document.getElementById('txt-out-tot-bm').innerText = String(totalBM).padStart(2, '0');
+            document.getElementById('txt-out-formula-ope').innerText = `${totalOutros} + ${totalBG} (BG) + ${totalCIPFAZ} (CIPFaz) = ${totalEfeOpeOrd}`;
+            document.getElementById('txt-out-tot-extra').innerText = String(totalEfeExtra).padStart(2, '0');
+            document.getElementById('txt-out-tot-pe').innerText = String(totalEfePeOPM).padStart(2, '0');
+            document.getElementById('txt-out-tot-adm').innerText = String(totalEfeAdm).padStart(2, '0');
+        }
+
+        function renderCharts(v4r, v2r, bm, opeOrd, extraEfe, peOPM, extNames, extV4RData, extV2RData, extBMData, extEfeData) {
+            if(chartViaturasInstance) chartViaturasInstance.destroy();
+            if(chartEfetivoInstance) chartEfetivoInstance.destroy();
+            if(chartExtraordinarioInstance) chartExtraordinarioInstance.destroy();
+
+            const ctxVtr = document.getElementById('chart-output-viaturas').getContext('2d');
+            chartViaturasInstance = new Chart(ctxVtr, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Quatro rodas', 'Duas rodas', 'Base Móvel'],
+                    datasets: [{
+                        data: [v4r, v2r, bm],
+                        backgroundColor: ['#1f160e', '#bda68c', '#eae2d8'],
+                        borderWidth: 1, borderColor: '#dfd6ca'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '65%' }
+            });
+
+            const ctxEfe = document.getElementById('chart-output-efetivo').getContext('2d');
+            chartEfetivoInstance = new Chart(ctxEfe, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Efetivo Operacional Ordinário', 
+                        'Efetivo Operacional Extraordinário', 
+                        'Policiamento à Pé das OPMs'
+                    ],
+                    datasets: [{
+                        data: [opeOrd, extraEfe, peOPM],
+                        backgroundColor: ['#1f160e', '#d9a74a', '#7a624a'],
+                        borderWidth: 1, borderColor: '#dfd6ca'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '65%' }
+            });
+
+            const extraContainer = document.getElementById('extra-panel-container');
+            const totalOps = operationalData.extraordinaryOperations.length;
+
+            if (totalOps > 3) {
+                let namesHTML = `<div class="grid grid-cols-2 gap-2.5 w-full h-full items-center">`;
+                operationalData.extraordinaryOperations.forEach((op, idx) => {
+                    namesHTML += `
+                        <div class="bg-[#fcfaf6] border border-[#dfd6ca] rounded-lg p-2 shadow-xs flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-[#7a624a] text-white flex items-center justify-center text-[10px] font-black flex-shrink-0">${idx + 1}</span>
+                            <div class="overflow-hidden">
+                                <p class="text-[11px] font-extrabold text-[#1f160e] uppercase truncate leading-tight">${op.name || 'Operação'}</p>
+                                <p class="text-[9px] font-semibold text-[#7a624a] truncate leading-tight">${op.commander || 'Cmdt N/I'}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                namesHTML += `</div>`;
+                extraContainer.innerHTML = namesHTML;
+            } else {
+                extraContainer.innerHTML = `<canvas id="chart-output-extraordinario"></canvas>`;
+                
+                const ctxExt = document.getElementById('chart-output-[#extraordinario]') || document.getElementById('chart-output-extraordinario').getContext('2d');
+                if(extNames.length === 0) {
+                    extNames = ["Nenhuma Operação"];
+                    extV4RData = [0]; extV2RData = [0]; extBMData = [0]; extEfeData = [0];
+                }
+
+                chartExtraordinarioInstance = new Chart(ctxExt, {
+                    type: 'bar',
+                    data: {
+                        labels: extNames,
+                        datasets: [
+                            { label: 'Vtr 4R', data: extV4RData, backgroundColor: '#1f160e' },
+                            { label: 'Vtr 2R', data: extV2RData, backgroundColor: '#bda68c' },
+                            { label: 'Base Móvel', data: extBMData, backgroundColor: '#eae2d8' },
+                            { label: 'Efetivo Extra', data: extEfeData, backgroundColor: '#d9a74a' }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: false, ticks: { stepSize: 1, color: '#1f160e', font: { weight: 'bold' } } },
+                            y: { ticks: { color: '#1f160e', font: { size: 10, weight: 'bold' } } }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10, weight: 'bold' } } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function copyFormattedReportToClipboard() {
+            let totalV4R = 0; let totalV2R = 0; let totalBM = 0; 
+            let totalEfeExtra = 0; let totalEfePeOPM = 0; let totalEfeOpeOrd = 0; let totalEfeAdm = 0;
+
+            operationalData.extraordinaryOperations.forEach(op => {
+                totalV4R += op.vtr_4r; totalV2R += op.vtr_2r; totalBM += op.bases; totalEfeExtra += (op.extra_efetivo || 0);
+            });
+
+            let totalBG = 0; let totalCIPFAZ = 0; let totalOutros = 0;
+
+            operationalData.units.forEach(u => {
+                totalV4R += u.vtr_4r; totalV2R += u.vtr_2r; totalBM += u.bases; totalEfeOpeOrd += u.operacional; totalEfeAdm += u.adm; totalEfePeOPM += u.pe;
+                if (u.key === "bpgd") totalBG = u.operacional;
+                else if (u.key === "cipfaz") totalCIPFAZ = u.operacional;
+                else totalOutros += u.operacional;
+            });
+
+            const cpapUnit = operationalData.units.find(u => u.key === "cpap");
+            const coordCpapText = cpapUnit ? cpapUnit.coordinator : "CAP PM ROSENDO";
+
+            let text = `POLÍCIA MILITAR DA BAHIA\nCOMANDO DE POLICIAMENTO DE APOIO OPERACIONAL\nCOORDENAÇÃO OPERACIONAL\nDATA: ${operationalData.date}\nTURNO: ${operationalData.turno}\n\nSUPERIOR DE DIA: ${operationalData.superiorDia}\n\nCoordenação CPAp: ${coordCpapText}\n\nSUPERVISÃO OPERACIONAL:\n* CICOC: ${operationalData.cicoc}\n* Coord. CICOM: ${operationalData.cicom}\n* Videomonitoramento: ${operationalData.video}\n* OPERADOR CPAP: ${operationalData.operador}\n\n\n`;
+
+            operationalData.units.forEach(u => {
+                if (u.key === "cpap") return;
+                text += `*${u.name.toUpperCase()}*\n`;
+                text += `Supervisor: *${u.coordinator}*\n`;
+                if(u.tel) text += `TEL: ${u.tel}\n`;
+                if(u.vtr_4r > 0 && u.key !== "cipfaz") text += `Viatura 4 Rodas: ${String(u.vtr_4r).padStart(2, '0')}\n`;
+                if(u.vtr_2r > 0) text += `Viaturas 2 Rodas: ${String(u.vtr_2r).padStart(2, '0')}\n`;
+                if(u.bases > 0) text += `Base Móvel: ${String(u.bases).padStart(2, '0')}\n`;
+                text += `Efetivo: ${u.operacional}${u.key.match(/(bptur|aguia|bppm|bpfrc|bpfrv)/) ? ' PMS' : ''}\n`;
+                if(u.pe > 0) text += `Policiamento à Pé: ${String(u.pe).padStart(2, '0')}\n`;
+                if(u.adm > 0) text += `ADM: ${String(u.adm).padStart(2, '0')}${u.key === 'bppm' ? ' PM' : ''}\n`;
+                if(u.extraText && u.extraText.trim().length > 0) text += `${u.extraText.trim()}\n`;
+                text += `\n`;
+            });
+
+            if (operationalData.extraordinaryOperations.length > 0) {
+                text += `*SERVIÇO EXTRAORDINÁRIO ATIVO (${operationalData.extraordinaryOperations.length})*\n`;
+                operationalData.extraordinaryOperations.forEach(op => {
+                    text += `* ${op.name || 'Operação'}\n  Comandante: ${op.commander || 'Não informado'}\n`;
+                    let resArr = [];
+                    if (op.vtr_4r > 0) resArr.push(`Vtr 4R: ${op.vtr_4r}`);
+                    if (op.vtr_2r > 0) resArr.push(`Vtr 2R: ${op.vtr_2r}`);
+                    if (op.bases > 0) resArr.push(`Base Móvel: ${op.bases}`);
+                    resArr.push(`Efetivo Extra: ${op.extra_efetivo || 0}`);
+                    text += `  Recursos: ` + resArr.join(" | ") + `\n\n`;
+                });
+            }
+
+            text += `EFETIVO E VIATURAS EMPREGADAS EM TODO CPAp\n▶️ 🚔 Quatro rodas: ${totalV4R}\n▶️ 🏍️ Duas rodas: ${totalV2R}\n▶️   Base Móvel: ${String(totalBM).padStart(2, '0')}\n▶️ Efetivo Operacional Ordinário: ${totalOutros} + ${totalBG} (BG) + ${totalCIPFAZ} (CIPFaz) = ${totalEfeOpeOrd}\n▶️ 👮 Efetivo Operacional Extraordinário: ${totalEfeExtra}\n▶️ 👮 Policiamento à Pé OPMs: ${String(totalEfePeOPM).padStart(2, '0')}\n▶️ 👮 Efetivo Administrativo: ${totalEfeAdm}`;
+
+            // ATIVA A PERMISSÃO DE CÓPIA PROGRAMÁTICA TEMPORARIAMENTE
+            isProgrammaticCopying = true;
+
+            function fallbackCopy(str) {
+                const dummy = document.createElement("textarea");
+                dummy.style.position = "fixed";
+                dummy.style.opacity = "0";
+                document.body.appendChild(dummy);
+                dummy.value = str;
+                dummy.focus();
+                dummy.select();
+                document.execCommand("copy");
+                document.body.removeChild(dummy);
+                showToast("Relatório formatado copiado para a área de transferência!", "green");
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast("Relatório formatado copiado para a área de transferência!", "green");
+                }).catch(() => {
+                    fallbackCopy(text);
+                }).finally(() => {
+                    setTimeout(() => { isProgrammaticCopying = false; }, 300);
+                });
+            } else {
+                fallbackCopy(text);
+                setTimeout(() => { isProgrammaticCopying = false; }, 300);
+            }
+        }
+
+        function showToast(msg, type = "google") {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl text-white font-bold text-xs shadow-xl z-[100] transition-all transform translate-y-10 opacity-0 flex items-center gap-2 duration-300`;
+            let bg = type === 'red' ? 'bg-red-600' : (type === 'green' ? 'bg-emerald-600' : 'bg-neutral-800');
+            toast.className += ` ${bg}`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
